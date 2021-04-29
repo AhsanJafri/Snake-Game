@@ -17,11 +17,11 @@ import {
   AsyncStorage,
 } from 'react-native';
 import {GameEngine, dispatch} from 'react-native-game-engine';
-import {Head} from '../head';
-import {Food} from '../food';
-import {Tail} from '../tail';
-import {GameLoop} from '../systems';
-import Constants from '../Constants';
+import {Head} from '../../head';
+import {Food} from '../../food';
+import {Tail} from '../../tail';
+import {GameLoop} from '../../systems';
+import Constants from '../../Constants';
 
 export default class Game extends Component {
   constructor(props) {
@@ -33,7 +33,7 @@ export default class Game extends Component {
       score: 0,
       visible: false,
       onFocused: true,
-      name: '',
+      name: this.props.route.params.name,
       hightscore: 812,
     };
   }
@@ -75,7 +75,7 @@ export default class Game extends Component {
       'hardwareBackPress',
       this.backAction,
     );
-    this.modal(true, name);
+    // this.modal(true, name);
   }
 
   componentWillUnmount() {
@@ -108,18 +108,15 @@ export default class Game extends Component {
   };
 
   onEvent = (e) => {
-    const {score} = this.state;
+    const {score, name} = this.state;
     if (e.type === 'game-over') {
       this.setState({
         running: false,
       });
-      Alert.alert('Hold on!', 'what do you want?', [
-        {
-          text: 'Exit',
-          onPress: () => BackHandler.exitApp(),
-        },
-        {text: 'Restart', onPress: () => this.reset()},
-      ]);
+      this.props.navigation.navigate('Result', {
+        score: score,
+        name: name,
+      });
     } else if (e.type === 'score+') {
       var s = score + 1;
       this.setState({
@@ -171,7 +168,7 @@ export default class Game extends Component {
     const {score, name, hightscore} = this.state;
     return (
       <View style={styles.container}>
-        <Modal
+        {/* <Modal
           animationType={'slide'}
           transparent={true}
           visible={this.state.visible}
@@ -205,7 +202,7 @@ export default class Game extends Component {
               <Text style={styles.stdTxt}>Play</Text>
             </TouchableOpacity>
           </View>
-        </Modal>
+        </Modal> */}
 
         <GameEngine
           ref={(ref) => {
